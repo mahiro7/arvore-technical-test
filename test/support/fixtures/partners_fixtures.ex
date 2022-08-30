@@ -11,12 +11,13 @@ defmodule Arvore.PartnersFixtures do
     {:ok, entity} =
       attrs
       |> Enum.into(%{
-        entity_type: "some entity_type",
-        inep: "some inep",
-        name: "some name"
+        entity_type: "network",
+        inep: nil,
+        name: "network name"
       })
       |> Arvore.Partners.create_entity()
 
     entity
+    |> Arvore.Partners.preload_children()
   end
 end

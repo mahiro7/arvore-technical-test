@@ -20,26 +20,26 @@ defmodule Arvore.PartnersTest do
       assert Partners.get_entity!(entity.id) == entity
     end
 
-    test "create_entity/1 with valid data creates a entity" do
-      valid_attrs = %{entity_type: "some entity_type", inep: "some inep", name: "some name"}
+    test "with valid data creates a entity" do
+      valid_attrs = %{entity_type: "school", inep: "123456", name: "some name"}
 
       assert {:ok, %Entity{} = entity} = Partners.create_entity(valid_attrs)
-      assert entity.entity_type == "some entity_type"
-      assert entity.inep == "some inep"
+      assert entity.entity_type == "school"
+      assert entity.inep == "123456"
       assert entity.name == "some name"
     end
 
-    test "create_entity/1 with invalid data returns error changeset" do
+    test "with invalid data returns error changeset" do
       assert {:error, %Ecto.Changeset{}} = Partners.create_entity(@invalid_attrs)
     end
 
     test "update_entity/2 with valid data updates the entity" do
       entity = entity_fixture()
-      update_attrs = %{entity_type: "some updated entity_type", inep: "some updated inep", name: "some updated name"}
+      update_attrs = %{entity_type: "school", inep: "78984", name: "some updated name"}
 
       assert {:ok, %Entity{} = entity} = Partners.update_entity(entity, update_attrs)
-      assert entity.entity_type == "some updated entity_type"
-      assert entity.inep == "some updated inep"
+      assert entity.entity_type == "school"
+      assert entity.inep == "78984"
       assert entity.name == "some updated name"
     end
 

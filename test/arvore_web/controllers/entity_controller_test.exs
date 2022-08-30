@@ -6,16 +6,16 @@ defmodule ArvoreWeb.EntityControllerTest do
   alias Arvore.Partners.Entity
 
   @create_attrs %{
-    entity_type: "some entity_type",
-    inep: "some inep",
-    name: "some name"
+    entity_type: "network",
+    inep: nil,
+    name: "some network"
   }
   @update_attrs %{
-    entity_type: "some updated entity_type",
-    inep: "some updated inep",
+    entity_type: "school",
+    inep: "123456",
     name: "some updated name"
   }
-  @invalid_attrs %{entity_type: nil, inep: nil, name: nil}
+  @invalid_attrs %{entity_type: "invalid", inep: nil, name: nil}
 
   setup %{conn: conn} do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
@@ -30,22 +30,32 @@ defmodule ArvoreWeb.EntityControllerTest do
 
   describe "create entity" do
     test "renders entity when data is valid", %{conn: conn} do
-      conn = post(conn, Routes.entity_path(conn, :create), entity: @create_attrs)
+      conn = post(conn, Routes.entity_path(conn, :create), @create_attrs)
       assert %{"id" => id} = json_response(conn, 201)["data"]
 
       conn = get(conn, Routes.entity_path(conn, :show, id))
 
       assert %{
                "id" => ^id,
-               "entity_type" => "some entity_type",
-               "inep" => "some inep",
-               "name" => "some name"
+               "entity_type" => "network",
+               "inep" => nil,
+               "name" => "some network"
              } = json_response(conn, 200)["data"]
     end
 
     test "renders errors when data is invalid", %{conn: conn} do
-      conn = post(conn, Routes.entity_path(conn, :create), entity: @invalid_attrs)
+      conn = post(conn, Routes.entity_path(conn, :create), @invalid_attrs)
       assert json_response(conn, 422)["errors"] != %{}
+    end
+
+    test "should not create entity without inep when school type", %{conn: conn} do
+      conn = post(conn, Routes.entity_path(conn, :create), %{entity_type: "school", name: "some"})
+      assert json_response(conn, 400)["error"] != %{}
+    end
+
+    test "should not create entity without parent_id when class type", %{conn: conn} do
+      conn = post(conn, Routes.entity_path(conn, :create), %{entity_type: "class", name: "some"})
+      assert json_response(conn, 400)["error"] != %{}
     end
   end
 
@@ -53,21 +63,21 @@ defmodule ArvoreWeb.EntityControllerTest do
     setup [:create_entity]
 
     test "renders entity when data is valid", %{conn: conn, entity: %Entity{id: id} = entity} do
-      conn = put(conn, Routes.entity_path(conn, :update, entity), entity: @update_attrs)
+      conn = put(conn, Routes.entity_path(conn, :update, entity), @update_attrs)
       assert %{"id" => ^id} = json_response(conn, 200)["data"]
 
       conn = get(conn, Routes.entity_path(conn, :show, id))
 
       assert %{
                "id" => ^id,
-               "entity_type" => "some updated entity_type",
-               "inep" => "some updated inep",
+               "entity_type" => "school",
+               "inep" => "123456",
                "name" => "some updated name"
              } = json_response(conn, 200)["data"]
     end
 
     test "renders errors when data is invalid", %{conn: conn, entity: entity} do
-      conn = put(conn, Routes.entity_path(conn, :update, entity), entity: @invalid_attrs)
+      conn = put(conn, Routes.entity_path(conn, :update, entity), @invalid_attrs)
       assert json_response(conn, 422)["errors"] != %{}
     end
   end
