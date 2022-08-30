@@ -21,4 +21,11 @@ defmodule ArvoreWeb.FallbackController do
     |> put_view(ArvoreWeb.ErrorView)
     |> render(:"404")
   end
+
+  def call(conn, {:error, {:check_constraint, message}}) do
+    conn
+    |> put_status(:bad_request)
+    |> put_view(ArvoreWeb.ErrorView)
+    |> render("error.json", message: message)
+  end
 end

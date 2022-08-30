@@ -16,4 +16,6 @@ defmodule ArvoreWeb.ChangesetView do
     # as a JSON object. So we just pass it forward.
     %{errors: translate_errors(changeset)}
   end
+
+  def render("error.json", %{message: message}), do: %{error: message}
 end
