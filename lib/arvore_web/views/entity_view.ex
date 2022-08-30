@@ -15,7 +15,9 @@ defmodule ArvoreWeb.EntityView do
       id: entity.id,
       name: entity.name,
       entity_type: entity.entity_type,
-      inep: entity.inep
+      inep: entity.inep,
+      parent_id: entity.parent_id,
+      subtree_ids: entity.children |> Enum.map(fn %{id: id} -> id end)
     }
   end
 end
