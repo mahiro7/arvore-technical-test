@@ -18,7 +18,9 @@ defmodule Arvore.Partners do
 
   """
   def list_entities do
-    Repo.all(Entity)
+    Entity
+    |> Repo.all()
+    |> Repo.preload(:children)
   end
 
   @doc """
@@ -35,7 +37,8 @@ defmodule Arvore.Partners do
       ** (Ecto.NoResultsError)
 
   """
-  def get_entity!(id), do: Repo.get!(Entity, id)
+  def get_entity!(id),
+    do: Entity |> Repo.get!(id) |> Repo.preload(:children)
 
   @doc """
   Creates a entity.
@@ -101,4 +104,6 @@ defmodule Arvore.Partners do
   def change_entity(%Entity{} = entity, attrs \\ %{}) do
     Entity.changeset(entity, attrs)
   end
+
+  def preload_children(%Entity{} = entity), do: Repo.preload(entity, :children)
 end
