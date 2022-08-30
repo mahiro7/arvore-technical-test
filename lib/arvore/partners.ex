@@ -53,9 +53,13 @@ defmodule Arvore.Partners do
 
   """
   def create_entity(attrs \\ %{}) do
-    %Entity{}
-    |> Entity.changeset(attrs)
-    |> Repo.insert()
+    try do
+      %Entity{}
+      |> Entity.changeset(attrs)
+      |> Repo.insert()
+    rescue
+      e -> {:error, {:check_constraint, e.message}}
+    end
   end
 
   @doc """
@@ -71,9 +75,13 @@ defmodule Arvore.Partners do
 
   """
   def update_entity(%Entity{} = entity, attrs) do
-    entity
-    |> Entity.changeset(attrs)
-    |> Repo.update()
+    try do
+      entity
+      |> Entity.changeset(attrs)
+      |> Repo.update()
+    rescue
+      e -> {:error, {:check_constraint, e.message}}
+    end
   end
 
   @doc """
@@ -106,4 +114,6 @@ defmodule Arvore.Partners do
   end
 
   def preload_children(%Entity{} = entity), do: Repo.preload(entity, :children)
+  def preload_children({:ok, %Entity{} = entity}), do: preload_children(entity)
+  def preload_children(e), do: e
 end
