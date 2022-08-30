@@ -12,7 +12,8 @@ defmodule ArvoreWeb.EntityController do
   end
 
   def create(conn, entity_params) do
-    with {:ok, %Entity{} = entity} <- Partners.create_entity(entity_params) do
+    with {:ok, %Entity{} = entity} <- Partners.create_entity(entity_params),
+         entity <- Partners.preload_children(entity) do
       conn
       |> put_status(:created)
       |> put_resp_header("location", Routes.entity_path(conn, :show, entity))
@@ -25,10 +26,11 @@ defmodule ArvoreWeb.EntityController do
     render(conn, "show.json", entity: entity)
   end
 
-  def update(conn, %{"id" => id, "entity" => entity_params}) do
+  def update(conn, %{"id" => id} = entity_params) do
     entity = Partners.get_entity!(id)
 
-    with {:ok, %Entity{} = entity} <- Partners.update_entity(entity, entity_params) do
+    with {:ok, %Entity{} = entity} <- Partners.update_entity(entity, entity_params),
+         entity <- Partners.preload_children(entity) do
       render(conn, "show.json", entity: entity)
     end
   end
