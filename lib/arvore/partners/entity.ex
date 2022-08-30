@@ -2,13 +2,11 @@ defmodule Arvore.Partners.Entity do
   use Ecto.Schema
   import Ecto.Changeset
 
-  @primary_key {:id, :binary_id, autogenerate: true}
-  @foreign_key_type :binary_id
   schema "entities" do
     field :entity_type, :string
     field :inep, :string
     field :name, :string
-    field :parent_id, :binary_id
+    field :parent_id, :id
 
     timestamps()
   end
